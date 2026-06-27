@@ -10,20 +10,6 @@ Pancreatic cysts are increasingly detected incidentally on cross-sectional imagi
 
 ---
 
-## Management Algorithm
-
-<iframe src="../../content/pancreas/cyst-algorithm.html" style="width:100%;border:none;border-radius:8px;min-height:420px;" id="algo-frame" scrolling="no"></iframe>
-<script>
-(function(){
-  var f=document.getElementById('algo-frame');
-  if(!f)return;
-  function resize(){if(f.contentWindow&&f.contentWindow.document&&f.contentWindow.document.body){f.style.height=f.contentWindow.document.body.scrollHeight+32+'px';}}
-  f.addEventListener('load',function(){resize();var mo=new MutationObserver(resize);mo.observe(f.contentWindow.document.body,{childList:true,subtree:true,attributes:true});});
-})();
-</script>
-
----
-
 ## Cyst Fluid Analysis
 
 ### Tumor Markers by Cyst Type
@@ -61,3 +47,17 @@ Pancreatic cysts are increasingly detected incidentally on cross-sectional imagi
 - **MCN vs. IPMN**: MCN does not communicate with the pancreatic duct (unlike IPMN); MCN almost exclusively in women and typically in the pancreatic tail
 - **SPT**: Young women, 2nd–3rd decade — this demographic alone narrows the differential significantly
 - **CNET**: Enhancing wall on CT distinguishes from other cysts; 10% are functional (insulinoma, gastrinoma)
+
+---
+
+## Management Algorithm
+
+<iframe src="../../content/pancreas/cyst-algorithm.html" style="width:100%;border:none;border-radius:8px;min-height:420px;" id="algo-frame" scrolling="no"></iframe>
+<script>
+(function(){
+  var f=document.getElementById('algo-frame');
+  if(!f)return;
+  function resize(){if(f.contentWindow&&f.contentWindow.document&&f.contentWindow.document.body){f.style.height=f.contentWindow.document.body.scrollHeight+32+'px';}}
+  f.addEventListener('load',function(){resize();var mo=new MutationObserver(resize);mo.observe(f.contentWindow.document.body,{childList:true,subtree:true,attributes:true});});
+})();
+</script>
