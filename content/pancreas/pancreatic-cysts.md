@@ -50,14 +50,12 @@ Pancreatic cysts are increasingly detected incidentally on cross-sectional imagi
 
 ---
 
-## Cyst Surveillance
+## Management Algorithm
 
-> For presumed IPMN or MCN with no high-risk stigmata. Surveillance should preferably be performed with the same imaging modality to maintain consistency in size measurements. Increase in cyst size defined as ≥3 mm/year.
-
-<iframe src="../../content/pancreas/surveillance-algorithm.html" style="width:100%;border:none;border-radius:8px;min-height:420px;" id="surv-frame" scrolling="no"></iframe>
+<iframe src="../../content/pancreas/cyst-algorithm.html" style="width:100%;border:none;border-radius:8px;min-height:420px;" id="algo-frame" scrolling="no"></iframe>
 <script>
 (function(){
-  var f=document.getElementById('surv-frame');
+  var f=document.getElementById('algo-frame');
   if(!f)return;
   function resize(){if(f.contentWindow&&f.contentWindow.document&&f.contentWindow.document.body){f.style.height=f.contentWindow.document.body.scrollHeight+32+'px';}}
   f.addEventListener('load',function(){resize();var mo=new MutationObserver(resize);mo.observe(f.contentWindow.document.body,{childList:true,subtree:true,attributes:true});});
@@ -66,12 +64,14 @@ Pancreatic cysts are increasingly detected incidentally on cross-sectional imagi
 
 ---
 
-## Management Algorithm
+## Cyst Surveillance
 
-<iframe src="../../content/pancreas/cyst-algorithm.html" style="width:100%;border:none;border-radius:8px;min-height:420px;" id="algo-frame" scrolling="no"></iframe>
+> For presumed IPMN or MCN with no high-risk stigmata. Surveillance should preferably be performed with the same imaging modality to maintain consistency in size measurements. Increase in cyst size defined as ≥3 mm/year.
+
+<iframe src="../../content/pancreas/surveillance-algorithm.html" style="width:100%;border:none;border-radius:8px;min-height:420px;" id="surv-frame" scrolling="no"></iframe>
 <script>
 (function(){
-  var f=document.getElementById('algo-frame');
+  var f=document.getElementById('surv-frame');
   if(!f)return;
   function resize(){if(f.contentWindow&&f.contentWindow.document&&f.contentWindow.document.body){f.style.height=f.contentWindow.document.body.scrollHeight+32+'px';}}
   f.addEventListener('load',function(){resize();var mo=new MutationObserver(resize);mo.observe(f.contentWindow.document.body,{childList:true,subtree:true,attributes:true});});
