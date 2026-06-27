@@ -1,0 +1,243 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+<style>
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0;}
+body{font-family:'Inter',system-ui,sans-serif;font-size:14px;color:#1a1a1a;background:#fff;padding:0;}
+.algo-wrap{max-width:720px;margin:0 auto;padding:8px 0 40px;}
+
+/* Card */
+.card{background:#fff;border:1px solid #e2e2e2;border-radius:8px;padding:24px 28px;margin-bottom:16px;}
+.card-question{font-size:15px;font-weight:600;color:#1a1a1a;line-height:1.5;margin-bottom:6px;}
+.card-sub{font-size:13px;color:#555;line-height:1.6;margin-bottom:18px;}
+.card-sub ul{margin:6px 0 0 18px;}
+.card-sub ul li{margin-bottom:3px;}
+
+/* Buttons */
+.btn-group{display:flex;flex-direction:column;gap:8px;}
+.btn{display:block;width:100%;text-align:left;padding:11px 16px;border:1px solid #d0d0d0;border-radius:6px;background:#fafafa;font-family:inherit;font-size:13.5px;color:#1a1a1a;cursor:pointer;transition:background 0.12s,border-color 0.12s;line-height:1.4;}
+.btn:hover{background:#eef2ff;border-color:#2a3fbf;color:#2a3fbf;}
+.btn-row{display:flex;gap:8px;}
+.btn-row .btn{width:auto;flex:1;}
+
+/* Outcome */
+.outcome{border-left:4px solid #2a3fbf;background:#eef2ff;border-radius:0 8px 8px 0;padding:18px 22px;margin-bottom:16px;}
+.outcome.warn{border-left-color:#d97706;background:#fffbeb;}
+.outcome.stop{border-left-color:#16a34a;background:#f0fdf4;}
+.outcome-title{font-size:15px;font-weight:600;margin-bottom:4px;}
+.outcome p{font-size:13.5px;color:#444;line-height:1.6;margin-top:4px;}
+
+/* Breadcrumb trail */
+.trail{margin-bottom:20px;}
+.trail-item{display:inline-flex;align-items:center;font-size:12px;color:#888;gap:4px;}
+.trail-item+.trail-item::before{content:"›";margin:0 4px;opacity:0.5;}
+.trail-label{background:#f0f0f0;border-radius:4px;padding:2px 7px;}
+
+/* Reset */
+.reset-btn{font-size:12px;color:#2a3fbf;background:none;border:none;cursor:pointer;padding:4px 0;text-decoration:underline;margin-top:4px;}
+
+/* Reference dropdown */
+details{border:1px solid #e2e2e2;border-radius:8px;overflow:hidden;margin-top:32px;}
+summary{padding:14px 18px;font-size:13.5px;font-weight:600;cursor:pointer;background:#f7f7f7;list-style:none;display:flex;align-items:center;gap:8px;color:#1a1a1a;}
+summary::-webkit-details-marker{display:none;}
+summary::before{content:"▶";font-size:10px;transition:transform 0.2s;display:inline-block;}
+details[open] summary::before{transform:rotate(90deg);}
+.ref-img{padding:16px;}
+.ref-img img{width:100%;height:auto;display:block;border-radius:4px;}
+</style>
+</head>
+<body>
+<div class="algo-wrap">
+  <div id="algo"></div>
+
+  <details>
+    <summary>Reference — Original Algorithm</summary>
+    <div class="ref-img">
+      <img src="../../images/pancreas/pancreatic-cyst-management-algorithm.png" alt="Pancreatic Cyst Management Algorithm"/>
+    </div>
+  </details>
+</div>
+
+<script>
+const STEPS = {
+  start: {
+    q: "Cyst seen on imaging",
+    sub: "Begin by characterizing the imaging appearance.",
+    choices: [
+      { label: "Radiographic diagnosis of non-neoplastic cyst, or classic imaging features of serous cystadenoma", next: "no_further_sca" },
+      { label: "None of the above — proceed to clinical evaluation", next: "q_obstructive" }
+    ]
+  },
+  no_further_sca: {
+    outcome: true,
+    type: "stop",
+    title: "No further evaluation unless symptomatic",
+    detail: "Classic imaging features of serous cystadenoma or confirmed non-neoplastic cyst. No additional workup required unless the patient develops symptoms."
+  },
+  q_obstructive: {
+    q: "Is there obstructive jaundice or an associated solid mass?",
+    choices: [
+      { label: "Yes", next: "refer_multidisciplinary_1" },
+      { label: "No — assess for history of pancreatitis", next: "q_pancreatitis" }
+    ]
+  },
+  q_pancreatitis: {
+    q: "Is there a history of pancreatitis?",
+    choices: [
+      { label: "Yes — probable pseudocyst", next: "q_concern_neoplasm" },
+      { label: "No", next: "q_worrisome_features" }
+    ]
+  },
+  q_concern_neoplasm: {
+    q: "Is there concern for a cystic neoplasm as the cause of acute pancreatitis?",
+    sub: "Consider if features are atypical for simple pseudocyst or if pancreatitis is unexplained.",
+    choices: [
+      { label: "No — probable pseudocyst", next: "follow_clinically" },
+      { label: "Yes", next: "eus_fna_pancreatitis" }
+    ]
+  },
+  follow_clinically: {
+    outcome: true,
+    type: "stop",
+    title: "Probable pseudocyst — follow clinically",
+    detail: "No further imaging or intervention required unless symptoms persist or worsen."
+  },
+  eus_fna_pancreatitis: {
+    outcome: true,
+    type: "warn",
+    title: "EUS ± FNA and consider referral to a multidisciplinary group",
+    detail: "Concern for cystic neoplasm as the underlying cause of pancreatitis warrants further characterization."
+  },
+  q_worrisome_features: {
+    q: "Are any of the following present?",
+    sub: `<ul>
+      <li>Main duct diameter &gt;5 mm</li>
+      <li>Cyst ≥3 cm</li>
+      <li>Change in main duct caliber with upstream atrophy</li>
+    </ul>`,
+    choices: [
+      { label: "Yes", next: "eus_fna_worrisome" },
+      { label: "No", next: "q_cyst_size" }
+    ]
+  },
+  eus_fna_worrisome: {
+    q: "After EUS ± FNA and multidisciplinary review — are any of the following present?",
+    sub: `<ul>
+      <li>Main duct involvement / patulous ampulla</li>
+      <li>Cytology with high-grade dysplasia or pancreatic cancer</li>
+      <li>Mural nodule</li>
+    </ul>`,
+    choices: [
+      { label: "Yes", next: "refer_multidisciplinary_1" },
+      { label: "No", next: "mri_6mo" }
+    ]
+  },
+  refer_multidisciplinary_1: {
+    outcome: true,
+    type: "warn",
+    title: "Refer to multidisciplinary group",
+    detail: "High-risk features present. Surgical evaluation and multidisciplinary discussion are indicated."
+  },
+  mri_6mo: {
+    outcome: true,
+    type: "stop",
+    title: "MRI in 6 months",
+    detail: "Worrisome features present on initial imaging but no high-risk stigmata on EUS/FNA. Short-interval surveillance with MRI."
+  },
+  q_cyst_size: {
+    q: "What is the size of the largest cyst?",
+    choices: [
+      { label: "< 1 cm", next: "mri_2yr" },
+      { label: "1–2 cm", next: "mri_1yr" },
+      { label: "2–3 cm", next: "q_ipmn_mcn" }
+    ]
+  },
+  mri_2yr: {
+    outcome: true,
+    type: "stop",
+    title: "MRI in 2 years",
+    detail: "Small cyst with no worrisome features. Routine surveillance at 2-year interval."
+  },
+  mri_1yr: {
+    outcome: true,
+    type: "stop",
+    title: "MRI in 1 year",
+    detail: "Intermediate-size cyst with no worrisome features. Surveillance at 1-year interval."
+  },
+  q_ipmn_mcn: {
+    q: "Is the cyst clearly IPMN or MCN?",
+    choices: [
+      { label: "No — uncertain diagnosis", next: "eus_fna_size" },
+      { label: "Yes — confirmed IPMN or MCN", next: "mri_eus_6_12mo" }
+    ]
+  },
+  eus_fna_size: {
+    q: "EUS ± FNA performed — what is the result?",
+    choices: [
+      { label: "Serous cystadenoma confirmed", next: "no_further_sca" },
+      { label: "IPMN or MCN confirmed", next: "mri_eus_6_12mo" }
+    ]
+  },
+  mri_eus_6_12mo: {
+    outcome: true,
+    type: "warn",
+    title: "MRI or EUS in 6–12 months",
+    detail: "Confirmed IPMN or MCN, 2–3 cm, no high-risk features. Short-interval surveillance."
+  }
+};
+
+let history = [];
+
+function render(stepId) {
+  const step = STEPS[stepId];
+  const el = document.getElementById('algo');
+  let html = '';
+
+  if (history.length > 0) {
+    html += '<div class="trail">';
+    history.forEach(h => {
+      html += `<span class="trail-item"><span class="trail-label">${h}</span></span>`;
+    });
+    html += '</div>';
+  }
+
+  if (step.outcome) {
+    const cls = step.type || '';
+    html += `<div class="outcome ${cls}">
+      <div class="outcome-title">${step.title}</div>
+      <p>${step.detail}</p>
+    </div>`;
+    html += `<button class="reset-btn" onclick="reset()">↩ Start over</button>`;
+  } else {
+    html += `<div class="card">
+      <div class="card-question">${step.q}</div>
+      ${step.sub ? `<div class="card-sub">${step.sub}</div>` : ''}
+      <div class="btn-group">`;
+    step.choices.forEach(c => {
+      html += `<button class="btn" onclick="choose('${c.next}', \`${c.label.replace(/`/g,"'")}\`)">${c.label}</button>`;
+    });
+    html += `</div></div>`;
+    if (history.length > 0) {
+      html += `<button class="reset-btn" onclick="reset()">↩ Start over</button>`;
+    }
+  }
+
+  el.innerHTML = html;
+}
+
+function choose(nextId, label) {
+  history.push(label.length > 50 ? label.substring(0,48)+'…' : label);
+  render(nextId);
+}
+
+function reset() {
+  history = [];
+  render('start');
+}
+
+render('start');
+</script>
+</body>
+</html>

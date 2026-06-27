@@ -1,0 +1,17 @@
+{
+  "categories": [
+    { "id": "esophagus", "name": "Esophagus", "topics": [] },
+    { "id": "stomach", "name": "Stomach", "topics": [] },
+    { "id": "small-intestine", "name": "Small Intestine", "topics": [] },
+    { "id": "liver", "name": "Liver", "topics": [] },
+    { "id": "biliary-tract", "name": "Biliary Tract", "topics": [] },
+    { "id": "pancreas", "name": "Pancreas", "topics": [
+      { "title": "Pancreatic Cysts", "file": "content/pancreas/pancreatic-cysts.md" }
+    ]},
+    { "id": "gi-bleeding", "name": "GI Bleeding", "topics": [] },
+    { "id": "large-intestine", "name": "Large Intestine", "topics": [] },
+    { "id": "ibd", "name": "IBD", "topics": [] },
+    { "id": "miscellaneous", "name": "Miscellaneous GI Topics", "topics": [] },
+    { "id": "endoscopy", "name": "Endoscopy", "topics": [] }
+  ]
+}
