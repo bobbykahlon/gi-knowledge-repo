@@ -1,0 +1,218 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+<style>
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0;}
+body{font-family:'Inter',system-ui,sans-serif;font-size:14px;color:#1a1a1a;background:#fff;padding:0;}
+.algo-wrap{max-width:720px;margin:0 auto;padding:8px 0 40px;}
+
+.card{background:#fff;border:1px solid #e2e2e2;border-radius:8px;padding:24px 28px;margin-bottom:16px;}
+.card-question{font-size:15px;font-weight:600;color:#1a1a1a;line-height:1.5;margin-bottom:6px;}
+.card-sub{font-size:13px;color:#555;line-height:1.6;margin-bottom:18px;}
+.card-sub ul{margin:6px 0 0 18px;}
+.card-sub ul li{margin-bottom:3px;}
+
+.btn-group{display:flex;flex-direction:column;gap:8px;}
+.btn{display:block;width:100%;text-align:left;padding:11px 16px;border:1px solid #d0d0d0;border-radius:6px;background:#fafafa;font-family:inherit;font-size:13.5px;color:#1a1a1a;cursor:pointer;transition:background 0.12s,border-color 0.12s;line-height:1.4;}
+.btn:hover{background:#eef2ff;border-color:#2a3fbf;color:#2a3fbf;}
+
+.outcome{border-left:4px solid #2a3fbf;background:#eef2ff;border-radius:0 8px 8px 0;padding:18px 22px;margin-bottom:16px;}
+.outcome.warn{border-left-color:#d97706;background:#fffbeb;}
+.outcome.stop{border-left-color:#16a34a;background:#f0fdf4;}
+.outcome-title{font-size:15px;font-weight:600;margin-bottom:4px;}
+.outcome p{font-size:13.5px;color:#444;line-height:1.6;margin-top:4px;}
+
+.trail{margin-bottom:20px;}
+.trail-item{display:inline-flex;align-items:center;font-size:12px;color:#888;gap:4px;}
+.trail-item+.trail-item::before{content:"›";margin:0 4px;opacity:0.5;}
+.trail-label{background:#f0f0f0;border-radius:4px;padding:2px 7px;}
+
+.reset-btn{font-size:12px;color:#2a3fbf;background:none;border:none;cursor:pointer;padding:4px 0;text-decoration:underline;margin-top:4px;}
+
+details{border:1px solid #e2e2e2;border-radius:8px;overflow:hidden;margin-top:32px;}
+summary{padding:14px 18px;font-size:13.5px;font-weight:600;cursor:pointer;background:#f7f7f7;list-style:none;display:flex;align-items:center;gap:8px;color:#1a1a1a;}
+summary::-webkit-details-marker{display:none;}
+summary::before{content:"▶";font-size:10px;transition:transform 0.2s;display:inline-block;}
+details[open] summary::before{transform:rotate(90deg);}
+.ref-img{padding:16px;}
+.ref-img img{width:100%;height:auto;display:block;border-radius:4px;}
+.ref-caption{font-size:12px;color:#666;margin-top:10px;line-height:1.5;}
+</style>
+</head>
+<body>
+<div class="algo-wrap">
+  <div id="algo"></div>
+
+  <details>
+    <summary>Reference — Original Algorithm (Figure 2)</summary>
+    <div class="ref-img">
+      <img src="../../images/pancreas/cyst-surveillance-algorithm.png" alt="Cyst Surveillance Algorithm — Figure 2"/>
+      <p class="ref-caption"><strong>Figure 2.</strong> Surveillance of presumed IPMN or MCN. *Surveillance should preferably be performed with same imaging modality in attempt to capture consistency in size measurements. **≥3 mm/year. IPMN, intraductal papillary mucinous neoplasm; MCN, mucinous cystic neoplasm.</p>
+    </div>
+  </details>
+</div>
+
+<script>
+const STEPS = {
+  start: {
+    q: "What is the largest cyst size?",
+    sub: "For presumed IPMN or MCN with no high-risk stigmata.",
+    choices: [
+      { label: "< 1 cm", next: "lt1_initial" },
+      { label: "1–2 cm", next: "one_to_two_initial" },
+      { label: "2–3 cm", next: "two_to_three_initial" },
+      { label: "> 3 cm", next: "gt3_initial" }
+    ]
+  },
+
+  // < 1 cm branch
+  lt1_initial: {
+    outcome: true,
+    type: "stop",
+    title: "MRI* q2 years × 4 years",
+    detail: "Surveillance with MRI every 2 years for 4 years. *Preferably the same imaging modality throughout for size consistency."
+  },
+  lt1_after: {
+    q: "After MRI surveillance — what is the result?",
+    choices: [
+      { label: "Stable size and appearance", next: "lt1_stable" },
+      { label: "Increase in cyst size ≥3 mm/year", next: "lt1_increase" }
+    ]
+  },
+  lt1_stable: {
+    outcome: true,
+    type: "stop",
+    title: "Consider lengthening of interval imaging",
+    detail: "Cyst is stable. Surveillance interval may be extended at clinician discretion."
+  },
+  lt1_increase: {
+    outcome: true,
+    type: "warn",
+    title: "Consider shorter interval with MRI or EUS ± FNA within 6 months",
+    detail: "Cyst has grown ≥3 mm/year. Shorten surveillance interval. If stable on follow-up, resume original schedule after 1 year."
+  },
+
+  // 1–2 cm branch
+  one_to_two_initial: {
+    outcome: true,
+    type: "stop",
+    title: "MRI* q1 year × 3 years",
+    detail: "Surveillance with MRI every year for 3 years. *Preferably the same imaging modality throughout."
+  },
+  one_to_two_after: {
+    q: "After MRI surveillance — what is the result?",
+    choices: [
+      { label: "Stable size and appearance", next: "one_to_two_stable" },
+      { label: "Increase in cyst size ≥3 mm/year", next: "lt1_increase" }
+    ]
+  },
+  one_to_two_stable: {
+    outcome: true,
+    type: "stop",
+    title: "MRI q2 years × 4 years",
+    detail: "Cyst is stable after initial 3-year period. Extend interval to every 2 years for 4 more years. If stable throughout, consider lengthening interval further."
+  },
+
+  // 2–3 cm branch
+  two_to_three_initial: {
+    outcome: true,
+    type: "warn",
+    title: "MRI* or EUS q6–12 months for 3 years",
+    detail: "Closer surveillance warranted. MRI or EUS every 6–12 months for 3 years. *Same imaging modality preferred."
+  },
+  two_to_three_after: {
+    q: "After surveillance — what is the result?",
+    choices: [
+      { label: "Stable size and appearance", next: "two_to_three_stable" },
+      { label: "Increase in cyst size ≥3 mm/year", next: "two_to_three_increase" }
+    ]
+  },
+  two_to_three_stable: {
+    outcome: true,
+    type: "stop",
+    title: "MRI q1 year × 4 years",
+    detail: "Cyst stable after initial period. Extend to annual MRI for 4 years. If stable, consider lengthening interval."
+  },
+  two_to_three_increase: {
+    outcome: true,
+    type: "warn",
+    title: "Refer to multidisciplinary group and consider EUS ± FNA",
+    detail: "Cyst has grown ≥3 mm/year. Multidisciplinary review and EUS ± FNA are recommended for further characterization."
+  },
+
+  // > 3 cm branch
+  gt3_initial: {
+    outcome: true,
+    type: "warn",
+    title: "Consider referral to multidisciplinary group + MRI* alternating with EUS q6 months × 3 years",
+    detail: "Cyst >3 cm warrants multidisciplinary review. Alternate MRI and EUS every 6 months for 3 years. *Same imaging modality preferred where possible."
+  },
+  gt3_after: {
+    q: "After surveillance — what is the result?",
+    choices: [
+      { label: "Stable size and appearance", next: "gt3_stable" }
+    ]
+  },
+  gt3_stable: {
+    outcome: true,
+    type: "stop",
+    title: "MRI alternating with EUS q year × 4 years",
+    detail: "Cyst stable after initial intensive surveillance. Continue alternating MRI/EUS annually for 4 years. If stable, consider lengthening interval."
+  }
+};
+
+let history = [];
+
+function render(stepId) {
+  const step = STEPS[stepId];
+  const el = document.getElementById('algo');
+  let html = '';
+
+  if (history.length > 0) {
+    html += '<div class="trail">';
+    history.forEach(h => {
+      html += `<span class="trail-item"><span class="trail-label">${h}</span></span>`;
+    });
+    html += '</div>';
+  }
+
+  if (step.outcome) {
+    const cls = step.type || '';
+    html += `<div class="outcome ${cls}">
+      <div class="outcome-title">${step.title}</div>
+      <p>${step.detail}</p>
+    </div>`;
+    html += `<button class="reset-btn" onclick="reset()">↩ Start over</button>`;
+  } else {
+    html += `<div class="card">
+      <div class="card-question">${step.q}</div>
+      ${step.sub ? `<div class="card-sub">${step.sub}</div>` : ''}
+      <div class="btn-group">`;
+    step.choices.forEach(c => {
+      html += `<button class="btn" onclick="choose('${c.next}', \`${c.label.replace(/`/g,"'")}\`)">${c.label}</button>`;
+    });
+    html += `</div></div>`;
+    if (history.length > 0) {
+      html += `<button class="reset-btn" onclick="reset()">↩ Start over</button>`;
+    }
+  }
+
+  el.innerHTML = html;
+}
+
+function choose(nextId, label) {
+  history.push(label.length > 50 ? label.substring(0,48)+'…' : label);
+  render(nextId);
+}
+
+function reset() {
+  history = [];
+  render('start');
+}
+
+render('start');
+</script>
+</body>
+</html>
